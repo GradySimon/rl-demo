@@ -1,9 +1,39 @@
 import * as dl from 'deeplearn';
 
+interface Environment {
+
+}
+
+/** 
+ * Something that can select actions in the face of observations.
+*/
+interface Agent<ObservationT, ActionT> {
+  /**
+   * Choose and return a concrete action based on the given observation
+   * @param obersvation the observation to act upon
+   */
+  act(obersvation: ObservationT): ActionT
+}
+
+interface ActionDistribution<ActionT> {
+  (action: ActionT): number 
+}
+
+interface Policy<ObservationT, ActionT> {
+  (observation: ObservationT): ActionDistribution<ActionT>
+}
+
+class ExampleAgent implements Agent<number, boolean> {
+  constructor(private policy: Policy<number, boolean>) {}
+  act(observation: number): boolean {
+    return false;
+  }
+}
+
 async function runExample() {
   const a = dl.tensor1d([1, 2, 3]);
   const b = dl.scalar(2);
-
+ 
   const result = a.add(b);
 
   // Option 1: With async/await.
