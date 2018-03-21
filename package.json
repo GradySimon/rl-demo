@@ -3,8 +3,15 @@
   "version": "0.0.1",
   "description": "Starter project for using deeplearn.js with TypeScript",
   "dependencies": {
+    "@types/react": "16.0.40",
+    "@types/react-dom": "16.0.4",
+    "@types/react-redux": "5.0.15",
+    "d3": "4.13.0",
     "deeplearn": "0.5.0",
-    "d3": "4.13.0"
+    "react": "16.2.0",
+    "react-dom": "16.2.0",
+    "react-redux": "5.0.7",
+    "redux": "3.7.2"
   },
   "devDependencies": {
     "@types/d3": "5.0.0",
@@ -17,8 +24,8 @@
   },
   "scripts": {
     "prep": "yarn && mkdirp dist",
-    "watch": "watchify main.ts -p [tsify] -v --debug -o dist/bundle.js",
-    "build": "browserify main.ts -p [tsify] -o dist/bundle.js",
+    "watch": "watchify main.tsx -p [tsify] -v --debug -o dist/bundle.js",
+    "build": "browserify main.tsx -p [tsify] -o dist/bundle.js",
     "lint": "tslint -p . -t verbose",
     "deploy": "yarn build && uglifyjs dist/bundle.js -c -m -o dist/bundle.min.js"
   },

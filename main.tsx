@@ -1,5 +1,7 @@
 import * as dl from 'deeplearn';
 import * as d3 from 'd3';
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 
 interface Environment {
 
@@ -53,4 +55,6 @@ async function runExample() {
 runExample();
 
 d3.select("body").append("span")
-    .text("Hello, world!");
+  .text("Hello, world!");
+
+ReactDOM.render(<h1>Hello</h1>, document.getElementById("app"));
