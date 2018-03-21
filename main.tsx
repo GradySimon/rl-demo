@@ -57,4 +57,10 @@ runExample();
 d3.select("body").append("span")
   .text("Hello, world!");
 
-ReactDOM.render(<h1>Hello</h1>, document.getElementById("app"));
+export default class Hello extends React.Component {
+  render() {
+    return <h1>Hello world!</h1>;
+  }
+}
+
+ReactDOM.render(<Hello />, document.getElementById("app"));
