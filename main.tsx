@@ -54,13 +54,56 @@ async function runExample() {
 
 runExample();
 
-d3.select("body").append("span")
-  .text("Hello, world!");
+// TODO: factor out a D3Component superclass
 
-export default class Hello extends React.Component {
+export type GridProps = {
+  rows: number,
+  cols: number,
+}
+
+export class Grid extends React.Component<GridProps, {}> {
+  private node: SVGSVGElement;
+  
+  constructor(public props: GridProps) {
+    super(props);
+    this.callD3 = this.callD3.bind(this);
+  }
+
+  componentDidMount() {
+    this.callD3();
+  }
+
+  componentDidUpdate() {
+    this.callD3();
+  }
+
+  callD3() {
+    const node = this.node;
+    d3.select(node)
+      .selectAll('circle')
+      .data([this.props.rows, this.props.cols])
+      .enter()
+      .append('circle')
+        .attr("cx", d => d * 40)
+        .attr("cy", d => d * 40)
+        .attr("r", d => 20);
+  }
+
   render() {
-    return <h1>Hello world!</h1>;
+    return <svg ref={node => this.node = node}
+                width={500} height={500}></svg>;
   }
 }
 
-ReactDOM.render(<Hello />, document.getElementById("app"));
+export default class Demo extends React.Component {
+  render() {
+    return (
+      <>
+        <h1>Hello from Demo!</h1>
+        <Grid rows={1} cols={2} />
+      </>
+    );
+  }
+}
+
+ReactDOM.render(<Demo />, document.getElementById("app"));
