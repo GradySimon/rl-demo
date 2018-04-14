@@ -16,12 +16,15 @@ interface Agent<ObservationT, ActionT> {
    * Choose and return a concrete action based on the given observation
    * @param obersvation the observation to act upon
    */
-  act(obersvation: ObservationT): ActionT
+  act(observation: ObservationT): ActionT
 }
 
+// Maybe action distributions should live in tensorflow, not here
 interface ActionDistribution<ActionT> {
   (action: ActionT): number 
 }
+
+// Interface for thing that can be trained by reinforcement learning?
 
 interface Policy<ObservationT, ActionT> {
   (observation: ObservationT): ActionDistribution<ActionT>
@@ -65,6 +68,7 @@ export type GridProps = {
   gridCells: Array<Array<number>>
 }
 
+type CellContent = number | string;
 
 type GridCell = {
   x: number;
@@ -72,7 +76,7 @@ type GridCell = {
   width: number;
   height: number;
   color: string;
-  content: any;
+  content: CellContent;
 }
 
 export class Grid extends React.Component<GridProps, {}> {
@@ -104,7 +108,7 @@ export class Grid extends React.Component<GridProps, {}> {
           width: cellWidth,
           height: cellHeight,
           color: "000",
-          content: "data",
+          content: `(${i}, ${j})`,
         });
       }
     }
@@ -115,26 +119,28 @@ export class Grid extends React.Component<GridProps, {}> {
     const gridSvg = this.node;
     const gridCells: Array<GridCell> = this.cells_();
 
-    let cells = d3.select(this.node)
-        .selectAll(".grid-cell")
-        .data(gridCells)
-        .enter().append('rect')
-          .attr('class', 'grid-cell')
-          .attr('x', cell => cell.x)
-          .attr('y', cell => cell.y)
-          .attr('width', cell => cell.width)
-          .attr('height', cell => cell.height)
-          .attr('rx', 20)
-          .attr('ry', 20);
-
-  //   d3.select(this.node)
-  //     .selectAll('circle')
-  //     .data([this.props.rows, this.props.cols])
-  //     .enter()
-  //     .append('circle')
-  //       .attr("cx", d => d * 40)
-  //       .attr("cy", d => d * 40)
-  //       .attr("r", d => 20);
+    let cells = d3.select(this.node).selectAll('g')
+      .data(gridCells)
+      .enter().append('g')
+        .attr('class', 'grid-cell')
+        .attr('transform', (cell => `translate(${cell.x}, ${cell.y})`))
+        .style('text-anchor', 'middle');
+    
+    let cellBackgrounds = cells.append('rect')
+      .attr('class', 'grid-cell-background')
+      .attr('width', cell => cell.width)
+      .attr('height', cell => cell.height)
+      .attr('rx', 20)
+      .attr('ry', 20)
+      .attr('fill', "pink");
+    
+    cells.filter(cell => typeof cell.content === "string")
+      .append('text')
+      .attr('x', cell => cell.width / 2)
+      .attr('y', cell => cell.height / 2)
+      .style('font-family', 'sans-serif')
+      .style('font-size', '30px')
+      .text(cell => cell.content);
   }
 
   render() {
@@ -148,7 +154,7 @@ export default class Demo extends React.Component {
     return (
       <>
         <h1>Hello from Demo!</h1>
-        <Grid width={500} height={500} rows={3} cols={3}
+        <Grid width={500} height={500} rows={4} cols={3}
               gridCells={[[1, 2], [3, 4]]}/>
       </>
     );
