@@ -4,6 +4,10 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { join } from 'path';
 
+import * as workerPath from "file-loader?name=[name].js!./demo.worker";
+
+const worker = new Worker(workerPath);
+
 interface Environment {
 
 }
@@ -132,7 +136,7 @@ export class Grid extends React.Component<GridProps, {}> {
       .attr('height', cell => cell.height)
       .attr('rx', 20)
       .attr('ry', 20)
-      .attr('fill', "pink");
+      .attr('fill', "green");
     
     cells.filter(cell => typeof cell.content === "string")
       .append('text')

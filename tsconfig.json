@@ -5,7 +5,7 @@
       "preserveConstEnums": true,
       "declaration": true,
       "target": "es5",
-      "lib": ["es2015", "dom"],
+      "lib": ["webworker", "es2015", "dom", "scripthost"],
       "outDir": "./dist",
       "jsx": "react"
   }
