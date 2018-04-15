@@ -35,7 +35,7 @@
     "build": "browserify main.tsx -p [tsify] -o dist/bundle.js",
     "lint": "tslint -p . -t verbose",
     "deploy": "yarn build && uglifyjs dist/bundle.js -c -m -o dist/bundle.min.js",
-    "start:dev": "webpack-dev-server"
+    "start":  "webpack-dev-server"
   },
   "license": "Apache-2.0"
 }

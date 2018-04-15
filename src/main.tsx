@@ -1,4 +1,3 @@
-import * as dl from 'deeplearn';
 import * as d3 from 'd3';
 import * as React from "react";
 import * as ReactDOM from "react-dom";
@@ -7,60 +6,6 @@ import { join } from 'path';
 import * as workerPath from "file-loader?name=[name].js!./demo.worker";
 
 const worker = new Worker(workerPath);
-
-interface Environment {
-
-}
-
-/** 
- * Something that can select actions in the face of observations.
-*/
-interface Agent<ObservationT, ActionT> {
-  /**
-   * Choose and return a concrete action based on the given observation
-   * @param obersvation the observation to act upon
-   */
-  act(observation: ObservationT): ActionT
-}
-
-// Maybe action distributions should live in tensorflow, not here
-interface ActionDistribution<ActionT> {
-  (action: ActionT): number 
-}
-
-// Interface for thing that can be trained by reinforcement learning?
-
-interface Policy<ObservationT, ActionT> {
-  (observation: ObservationT): ActionDistribution<ActionT>
-}
-
-class ExampleAgent implements Agent<number, boolean> {
-  constructor(private policy: Policy<number, boolean>) {}
-  act(observation: number): boolean {
-    return false;
-  }
-}
-
-async function runExample() {
-  const a = dl.tensor1d([1, 2, 3]);
-  const b = dl.scalar(2);
- 
-  const result = a.add(b);
-
-  // Option 1: With async/await.
-  // Caveat: in non-Chrome browsers you need to put this in an async function.
-  // console.log(await result.data());  // Float32Array([3, 4, 5])
-  let resolvedData = await result.data();
-  d3.select("body").append("span").text(resolvedData.toString());
-  // // Option 2: With a Promise.
-  // result.data().then(data => console.log(data));
-
-  // // Option 3: Synchronous download of data.
-  // // This is simpler, but blocks the UI until the GPU is done.
-  // console.log(result.dataSync());
-}
-
-runExample();
 
 // TODO: factor out a D3Component superclass
 
@@ -136,7 +81,7 @@ export class Grid extends React.Component<GridProps, {}> {
       .attr('height', cell => cell.height)
       .attr('rx', 20)
       .attr('ry', 20)
-      .attr('fill', "green");
+      .attr('fill', "pink");
     
     cells.filter(cell => typeof cell.content === "string")
       .append('text')

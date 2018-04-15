@@ -1,4 +1,4 @@
-console.log('hello from a webworker');
+console.log('hello from a Web Worker');
 
 addEventListener('message', (message) => {
   console.log('in webworker', message);
