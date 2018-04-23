@@ -3,9 +3,9 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { join } from 'path';
 
-import * as workerPath from "file-loader?name=[name].js!./demo.worker";
+import RLWorker from "./RLWorker";
 
-const worker = new Worker(workerPath);
+const rlWorker = new RLWorker();
 
 // TODO: factor out a D3Component superclass
 

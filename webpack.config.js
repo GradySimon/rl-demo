@@ -18,6 +18,13 @@ module.exports = {
         enforce: 'pre',
         test: /\.ts?$/,
         use: "source-map-loader"
+      },
+      {
+        test: /\.worker\.ts$/,
+        use: {
+          loader: 'worker-loader', 
+          // options: {inline: true},
+        }
       }
     ]
   },
