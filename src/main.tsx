@@ -3,9 +3,8 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { join } from 'path';
 
+import * as rl from "./rl";
 import RLWorker from "./RLWorker";
-
-const rlWorker = new RLWorker();
 
 // TODO: factor out a D3Component superclass
 
@@ -98,16 +97,50 @@ export class Grid extends React.Component<GridProps, {}> {
   }
 }
 
-export default class Demo extends React.Component {
+export class StepControls extends React.Component {
+  render() {
+    return <div></div>
+  }
+}
+
+export type GridWorldExampleState = {
+  gridWorldState: rl.GridWorldState,
+}
+
+
+// Create GridWorld worker, manage in lifecycle methods
+// Create step button with callback prop for telling the worker to step.
+export class GridWorldExample extends React.Component<{}, GridWorldExampleState> {
+  state: GridWorldExampleState = {
+    gridWorldState: {agentCoords: [1, 1], final: false}
+  };
+  private worker: Worker;
+
+  componentWillMount() {
+    this.worker = new RLWorker();
+    this.worker.onmessage = this.handlerWorkerMessage;
+    this.worker.postMessage({'type': 'step'});
+  }
+
+  handlerWorkerMessage = (event: MessageEvent) => {
+    this.setState({gridWorldState: event.data.gridWorldState});
+  } 
+
+  handleStepClick = () => {
+    this.worker.postMessage({'type': 'step'});
+  }
+
   render() {
     return (
       <>
-        <h1>Hello from Demo!</h1>
+        <h1 className="example-title">Grid World</h1>
+        <StepControls />
         <Grid width={500} height={500} rows={4} cols={3}
               gridCells={[[1, 2], [3, 4]]}/>
+        <pre>{JSON.stringify(this.state, null, 2)}</pre>
       </>
     );
   }
 }
 
-ReactDOM.render(<Demo />, document.getElementById("app"));
+ReactDOM.render(<GridWorldExample />, document.getElementById("app"));

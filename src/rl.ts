@@ -13,18 +13,18 @@ export interface World<StateT, ActionT> {
   step(state: StateT, action: ActionT): [StateT, number]
 }
 
-export enum GridDirection {
+export const enum GridDirection {
   North,
   East,
   South,
   West
 }
 
-let gridDirectionDelta = {
-  North: [0, -1],
-  East: [1, 0],
-  South: [0, 1],
-  West: [-1, 0],
+const gridDirectionDelta = {
+  [GridDirection.North]: [0, -1],
+  [GridDirection.East]: [1, 0],
+  [GridDirection.South]: [0, 1],
+  [GridDirection.West]: [-1, 0],
 }
 
 export type GridCoords = [number, number];
@@ -82,7 +82,7 @@ export interface Policy<ObservationT, ActionT> {
 }
 
 export class ExampleAgent implements Agent<GridCoords, GridDirection> {
-  constructor(private policy: Policy<GridCoords, GridDirection>) { }
+  constructor() { }
   act(observation: GridCoords): GridDirection {
     return GridDirection.North;
   }
