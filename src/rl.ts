@@ -21,10 +21,10 @@ export const enum GridDirection {
 }
 
 const gridDirectionDelta = {
-  [GridDirection.North]: [0, -1],
-  [GridDirection.East]: [1, 0],
-  [GridDirection.South]: [0, 1],
-  [GridDirection.West]: [-1, 0],
+  [GridDirection.North]: [-1, 0],
+  [GridDirection.East]: [0, 1],
+  [GridDirection.South]: [1, 0],
+  [GridDirection.West]: [0, -1],
 }
 
 export type GridCoords = [number, number];
@@ -40,11 +40,11 @@ export class GridWorld implements World<GridWorldState, GridDirection> {
   constructor(public readonly rows, public readonly cols) {
   }
 
-  coordsInDirection_([startCol, startRow]: GridCoords, direction: GridDirection): GridCoords {
-    let [deltaCols, deltaRows] = gridDirectionDelta[direction];
+  coordsInDirection_([startRow, startCol]: GridCoords, direction: GridDirection): GridCoords {
+    let [deltaRows, deltaCols] = gridDirectionDelta[direction];
     return [
-      clip(0, this.rows, startCol + deltaCols),
-      clip(0, this.cols, startRow + deltaRows)
+      clip(0, this.rows, startRow + deltaRows),
+      clip(0, this.cols, startCol + deltaCols)
     ];
   }
 
