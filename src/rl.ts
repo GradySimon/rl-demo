@@ -43,8 +43,8 @@ export class GridWorld implements World<GridWorldState, GridDirection> {
   coordsInDirection_([startRow, startCol]: GridCoords, direction: GridDirection): GridCoords {
     let [deltaRows, deltaCols] = gridDirectionDelta[direction];
     return [
-      clip(0, this.rows, startRow + deltaRows),
-      clip(0, this.cols, startCol + deltaCols)
+      clip(0, this.rows - 1, startRow + deltaRows),
+      clip(0, this.cols - 1, startCol + deltaCols)
     ];
   }
 
@@ -84,7 +84,14 @@ export interface Policy<ObservationT, ActionT> {
 export class ExampleAgent implements Agent<GridCoords, GridDirection> {
   constructor() { }
   act(observation: GridCoords): GridDirection {
-    return GridDirection.North;
+    const choices = [
+      GridDirection.North,
+      GridDirection.East,
+      GridDirection.South,
+      GridDirection.West,
+    ];
+    const randomIndex: number = Math.floor(Math.random() * choices.length)
+    return choices[randomIndex];
   }
 }
 
