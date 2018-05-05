@@ -81,7 +81,9 @@ export class Grid extends React.Component<GridProps, {}> {
   renderD3() {
     const gridSvg = this.node;
     this.renderCells_(this.node, this.cellData_());
-    this.renderAgent_(this.node, this.props.agentCoords);
+    if (this.props.agentCoords) {
+      this.renderAgent_(this.node, this.props.agentCoords);
+    }
   }
 
   private renderCells_(node: SVGSVGElement, cellData: Array<GridCell>) {
@@ -161,13 +163,14 @@ function DebugDisplay(props: {name: string, value: any}) {
 // Create step button with callback prop for telling the worker to step.
 export class GridWorldExample extends React.Component<{}, GridWorldExampleState> {
   state: GridWorldExampleState = {
-    gridWorldState: {agentCoords: [3, 3], final: false}
+    gridWorldState: null,
   };
   private worker: Worker;
 
   componentWillMount() {
     this.worker = new RLWorker();
     this.worker.onmessage = this.handlerWorkerMessage;
+    this.worker.postMessage({'type': 'peek'} as messages.Peek);
   }
 
   handlerWorkerMessage = (event: MessageEvent) => {
@@ -176,17 +179,20 @@ export class GridWorldExample extends React.Component<{}, GridWorldExampleState>
   }
 
   handleStepClick = () => {
-    this.worker.postMessage({'type': 'step'});
+    this.worker.postMessage({'type': 'step'} as messages.Step);
   }
 
   render() {
+    const agentCoordsOrNull = this.state.gridWorldState ? 
+                                this.state.gridWorldState.agentCoords :
+                                null;
     return (
       <>
         <h1 className="example-title">Grid World</h1>
         <StepControls onStepClick={this.handleStepClick} />
         <Grid width={500} height={500} rows={4} cols={4}
               gridCells={[[1, 2], [3, 4]]}
-              agentCoords={this.state.gridWorldState.agentCoords} />
+          agentCoords={agentCoordsOrNull} />
         <DebugDisplay name="GridWorldExample state" value={this.state} />
       </>
     );
