@@ -1,12 +1,10 @@
 import * as rl from '../rl';
 import * as messages from '../messages';
 
-console.log('hi! ' + rl.GridDirection.South);
-
 const gridWorld: rl.GridWorld = new rl.GridWorld(4, 4);
 const agent: rl.ExampleAgent = new rl.ExampleAgent;
 
-let currentState: rl.GridWorldState = {agentCoords: [1, 1], final: false};
+let currentState: rl.GridWorldState = {agentCoords: [3, 3], final: false};
 
 function step(state: rl.GridWorldState): rl.GridWorldState {
   const action = agent.act(state.agentCoords);
@@ -14,14 +12,9 @@ function step(state: rl.GridWorldState): rl.GridWorldState {
   return nextState;
 }
 
-function logMessage(message: messages.Message) {
-  console.log(`Recieved message of type ${message.type}:` + '\n' + 
-              JSON.stringify(message));
-}
-
 onmessage = function(event: MessageEvent) {
   const message = <messages.Message>event.data;
-  logMessage(message);
+  messages.log(message);
   switch (message.type) {
     case 'step':
       currentState = step(currentState);
