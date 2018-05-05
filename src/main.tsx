@@ -38,16 +38,16 @@ export class Grid extends React.Component<GridProps, {}> {
   
   constructor(public props: GridProps) {
     super(props);
-    this.callD3 = this.callD3.bind(this);
+    this.renderD3 = this.renderD3.bind(this);
     this.cellData_ = this.cellData_.bind(this);
   }
 
   componentDidMount() {
-    this.callD3();
+    this.renderD3();
   }
 
   componentDidUpdate() {
-    this.callD3();
+    this.renderD3();
   }
 
   
@@ -59,7 +59,6 @@ export class Grid extends React.Component<GridProps, {}> {
     return this.props.height / this.props.rows;
   } 
   
-
   private cellData_(): Array<GridCell> {
     let cells: Array<GridCell> = [];
     for (let i = 0; i < this.props.rows; ++i) {
@@ -79,27 +78,21 @@ export class Grid extends React.Component<GridProps, {}> {
     return cells;
   }
 
-  // Restructure this:
-  // Cells are separate data from agent, separate data selections
-  // Cells need only enter
-  // Agent has enter and update (update is just the .data() call, no .update)
-  // Side note: setting a key random key on the svg element in render worked 
-  // to totally reset d3 with props updates
-  // Ian recommended a foreach construct on D3 selections
-
-  callD3() {
+  renderD3() {
     const gridSvg = this.node;
-    const cellData: Array<GridCell> = this.cellData_();
-    const agentCoords: [number, number] = this.props.agentCoords;
+    this.renderCells_(this.node, this.cellData_());
+    this.renderAgent_(this.node, this.props.agentCoords);
+  }
 
-    let cells = d3.select(this.node).selectAll('g.grid-cell')
+  private renderCells_(node: SVGSVGElement, cellData: Array<GridCell>) {
+    let cells = d3.select(node).selectAll('g.grid-cell')
       .data(cellData).enter()
       .append('g')
-        .attr('class', 'grid-cell')
-        .attr('transform', (cell => `translate(${cell.x}, ${cell.y})`))
-        .style('text-anchor', 'middle');
+      .attr('class', 'grid-cell')
+      .attr('transform', (cell => `translate(${cell.x}, ${cell.y})`))
+      .style('text-anchor', 'middle');
 
-    let cellContents = 
+    let cellContents =
       cells.append('rect')
         .attr('class', 'grid-cell-background')
         .attr('width', cell => cell.width)
@@ -107,24 +100,26 @@ export class Grid extends React.Component<GridProps, {}> {
         .attr('rx', 20)
         .attr('ry', 20)
         .attr('fill', "pink")
-      
-    cells.append('text')
-        .attr('x', cell => cell.width / 2)
-        .attr('y', cell => cell.height / 2)
-        .style('font-family', 'sans-serif')
-        .style('font-size', '30px')
-        .text(cell => cell.content);
 
+    cells.append('text')
+      .attr('x', cell => cell.width / 2)
+      .attr('y', cell => cell.height / 2)
+      .style('font-family', 'sans-serif')
+      .style('font-size', '30px')
+      .text(cell => cell.content);
+  }
+
+  private renderAgent_(node: SVGSVGElement, agentCoords: rl.GridCoords) {
     let boundAgentCoords =
-      d3.select(this.node).selectAll('circle.agent').data([agentCoords])
+      d3.select(node).selectAll('circle.agent').data([agentCoords])
 
     boundAgentCoords.enter()
       .append('circle')
-        .classed('agent', true)
-        .attr('cx', coords => coords[1] * this.cellWidth + this.cellWidth / 2)
-        .attr('cy', coords => coords[0] * this.cellHeight +this.cellHeight / 2)
-        .attr('r', coords => Math.min(this.cellWidth, this.cellHeight) / 2 - 5);
-    
+      .classed('agent', true)
+      .attr('cx', coords => coords[1] * this.cellWidth + this.cellWidth / 2)
+      .attr('cy', coords => coords[0] * this.cellHeight + this.cellHeight / 2)
+      .attr('r', coords => Math.min(this.cellWidth, this.cellHeight) / 2 - 5);
+
     boundAgentCoords
       .attr('cx', coords => coords[1] * this.cellWidth + this.cellWidth / 2)
       .attr('cy', coords => coords[0] * this.cellHeight + this.cellHeight / 2);
